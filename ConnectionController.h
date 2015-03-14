@@ -1,6 +1,8 @@
 #import <Foundation/Foundation.h>
 #import "SharedDefine.h"
 
+BOOL hasReceivedData;
+
 @interface ConnectionController : NSObject <NSStreamDelegate> {
 	NSInputStream *ingoingConnection;
 	NSOutputStream *outgoingConnection;
