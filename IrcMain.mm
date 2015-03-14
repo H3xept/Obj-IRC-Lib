@@ -7,6 +7,11 @@ int main(int argc, const char * argv[])
     	ConnectionController* client = [[ConnectionController alloc] init];
     	[client setHOST:@"irc.saurik.com"];
     	[client setPORT:6667];
+    	[client setNick:@"Test"];
+    	[client setName:@"Test"];
+    	[client setPass:@"Test"];
+    	[client setMode:0];
+    	[client handShake];
     	[NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:client withObject:nil];
 
     	while(1){

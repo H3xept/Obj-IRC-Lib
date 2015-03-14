@@ -1,6 +1,6 @@
 #import "ConnectionController.h"
 #import "SharedDefine.h"
-#import "Protocol.h"
+#import "IRCProtocol.h"
 
 @interface ConnectionController()
 -(const char*)simpleCStringConvert:(NSString*)string;
@@ -81,7 +81,7 @@
 	while([ingoingConnection hasBytesAvailable]){
 		rLen = [ingoingConnection read:buf maxLength:sizeof(buf)];
 		if(rLen > 0){//GOT DATA
-			__unused NSString* dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
+			dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
 		}
 		if(dataStream){
 			printf("%s %s",IRC_NAME,[self simpleCStringConvert:dataStream]);
@@ -105,6 +105,15 @@
 {
 	const char* str = [string cStringUsingEncoding:[NSString defaultCStringEncoding]];
 	return str;
+}
+
+-(BOOL)handShake{
+	uint8_t *sendStr = [[IRCProtocol sharedInstance] generateHandShake:self.nick Password:self.pass Mode:self.mode RealName:self.name];
+	int conn = [outgoingConnection write:(const uint8_t *)sendStr maxLength:strlen((char *)sendStr)];
+	if(conn != -1){
+		return 1;
+	}
+	return 0;
 }
 
 @end
