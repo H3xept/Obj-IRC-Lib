@@ -5,6 +5,7 @@
 	NSInputStream *ingoingConnection;
 	NSOutputStream *outgoingConnection;
 	NSString* dataStream;
+	BOOL authenticated;
 }
 @property connectionState state;
 @property (assign) NSString* HOST;

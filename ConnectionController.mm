@@ -13,6 +13,10 @@
 	self.state = kStateDisconnected;
 	self.HOST = @"localhost";
 	self.PORT = 6667;
+	self.nick = @"User";
+	self.name = @"User";
+	self.pass = @"Pass";
+	self.mode = 0;
 	return self;
 }
 
@@ -34,6 +38,7 @@
 	[outgoingConnection open];
 
 	[[NSRunLoop currentRunLoop] run];
+
 }
 
 
@@ -56,6 +61,9 @@
 			[self handleDisconnected];
 			break;
 		case NSStreamEventHasSpaceAvailable:
+			if(!self->authenticated){
+				[self handShake];
+			}
 			break;
 		}
 }
