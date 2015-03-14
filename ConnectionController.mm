@@ -121,7 +121,7 @@
 }
 
 -(void)handleDisconnected
-{
+{ 
 	const char* host = [self simpleCStringConvert:self.HOST];
 	printf("%s Disconnected from <%s:%d>",IRC_NAME,host,self.PORT);
 }
@@ -149,4 +149,27 @@
 	return TRUE;
 }
 
+-(BOOL)send:(NSString*)str
+{
+	if(self.state == kStateConnected){
+
+	const uint8_t* buffer = (const uint8_t*)[[NSString stringWithFormat:@"%@\r\n",str] UTF8String];
+	int conn = [outgoingConnection write:buffer maxLength:strlen((char *)buffer)];
+	if(conn == 1)
+		return 1;
+	else
+		return 0;
+	
+	}
+	return 0;
+}
+
 @end
+
+
+
+
+
+
+
+
