@@ -62,7 +62,10 @@
 			break;
 		case NSStreamEventHasSpaceAvailable:
 			if(!self->authenticated){
-				[self handShake];
+				BOOL result = [self handShake];
+				if(result==YES){
+				self->authenticated = YES;
+				}
 			}
 			break;
 		}

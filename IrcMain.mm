@@ -12,8 +12,6 @@ int main(int argc, const char * argv[])
     	[client setPass:@"Test"];
     	[client setMode:0];
     	[NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:client withObject:nil];
-    	sleep(5);
-       	[client handShake];
 
     	while(1){
     	sleep(5);
