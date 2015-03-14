@@ -1,3 +1,7 @@
+#define __DEBUG
+
+#define PING_TIME 15
+
 #import <Foundation/Foundation.h>
 #import "SharedDefine.h"
 
@@ -22,6 +26,8 @@
 -(void)handleBytesAvailable;
 -(void)handleConnectionError;
 -(void)handleDisconnected;
+
+//-(BOOL)send:(NSString*)str;
 
 -(BOOL)handShake;
 -(BOOL)ping;

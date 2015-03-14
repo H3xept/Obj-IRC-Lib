@@ -66,7 +66,7 @@
 					if(result==YES){
 					self->authenticated = YES;
 					
-					[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(ping) userInfo:nil repeats:YES];
+					[NSTimer scheduledTimerWithTimeInterval:PING_TIME target:self selector:@selector(ping) userInfo:nil repeats:YES];
 				}
 			}
 			break;
@@ -132,7 +132,24 @@
 	return str;
 }
 
--(BOOL)handShake{
+/*
+-(BOOL)send:(NSString*)str
+{
+	if(self.state == kStateConnected){
+
+	const uint8_t* buffer = (const uint8_t*)[[NSString stringWithFormat:@"%@\r\n",str] UTF8String];
+	int conn = [outgoingConnection write:buffer maxLength:strlen((char *)buffer)];
+	if(conn == 1)
+		return 1;
+	else
+		return 0;
+	}
+	return 0;
+}
+*/
+
+-(BOOL)handShake
+{
 	uint8_t *sendStr = [[IRCProtocol sharedInstance] generateHandShake:self.nick Password:self.pass Mode:self.mode RealName:self.name];
 	int conn = [outgoingConnection write:(const uint8_t *)sendStr maxLength:strlen((char *)sendStr)];
 
@@ -144,9 +161,17 @@
 
 -(BOOL)ping
 {
-	//printf("ping!\n");
+	uint8_t *sendStr = (uint8_t *)"PING :hey!\r\n";
+	int conn = [outgoingConnection write:(const uint8_t *)sendStr maxLength:strlen((char *)sendStr)];
 
-	return TRUE;
+#ifdef __DEBUG
+	printf("[DEBUG]: %s", (char *)sendStr);
+#endif
+
+	if(conn != -1){
+		return 1;
+	}
+	return 0;
 }
 
 @end
