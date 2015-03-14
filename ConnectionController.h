@@ -5,6 +5,7 @@
 	NSInputStream *ingoingConnection;
 	NSOutputStream *outgoingConnection;
 	NSString* dataStream;
+	NSMutableArray* parsedBuffer;
 	BOOL authenticated;
 }
 @property connectionState state;
