@@ -5,9 +5,10 @@
 	NSInputStream *ingoingConnection;
 	NSOutputStream *outgoingConnection;
 	NSString* dataStream;
-	BOOL hasReceivedData;
 }
 @property connectionState state;
+@property (assign) NSString* HOST;
+@property (assign) int PORT;
 
 -(void)establishConnection;
 -(void)handleEventNone;
