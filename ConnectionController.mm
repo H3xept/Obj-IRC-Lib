@@ -2,7 +2,13 @@
 #import "SharedDefine.h"
 
 #define HOST @"localhost"
-#define PORT 8000
+#define PORT 6667
+
+int p;
+
+@interface ConnectionController()
+-(const char*)simpleCStringConvert:(NSString*)string;
+@end
 
 @implementation ConnectionController
 
@@ -51,6 +57,10 @@
 		case NSStreamEventEndEncountered:
 			[self handleDisconnected];
 			break;
+		case NSStreamEventHasSpaceAvailable:
+			NSLog(@"SPACE!");
+			[self joinChat];
+			break;
 		}
 }
 
@@ -70,22 +80,55 @@
 
 -(void)handleBytesAvailable
 {
-	uint8_t* buf;
-	NSLog(@"SIZE -> %lu",sizeof(buf));
+	uint8_t buf[1024];
+	int rLen; 
+	while([ingoingConnection hasBytesAvailable]){
+		rLen = [ingoingConnection read:buf maxLength:sizeof(buf)];
+		if(rLen > 0){//GOT DATA
+			__unused NSString* dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
+		}
+		if(dataStream){
+			printf("%s %s",IRC_NAME,[self simpleCStringConvert:dataStream]);
+		}
+	}
 }
 
 -(void)handleConnectionError
 {
-	const char* host = [HOST cStringUsingEncoding:[NSString defaultCStringEncoding]];
+	const char* host = [self simpleCStringConvert:HOST];
 	printf("%s There was an error while connecting to <%s:%d>",IRC_NAME,host,PORT);
 }
 
 -(void)handleDisconnected
 {
-	const char* host = [HOST cStringUsingEncoding:[NSString defaultCStringEncoding]];
+	const char* host = [self simpleCStringConvert:HOST];
 	printf("%s Disconnected from <%s:%d>",IRC_NAME,host,PORT);
 }
 
+-(const char*)simpleCStringConvert:(NSString*)string
+{
+	const char* str = [string cStringUsingEncoding:[NSString defaultCStringEncoding]];
+	return str;
+}
+
+- (void)joinChat{
+	if(!p){
+ 	NSLog(@"UMH");
+	NSString *response  = @"NICK Try";
+	NSData *data = [[NSData alloc] initWithData:[response dataUsingEncoding:NSASCIIStringEncoding]];
+	[outgoingConnection write:(const uint8_t *)[data bytes] maxLength:[data length]];
+
+	NSString *response2  = @"USER Try 0 * :Try";
+	NSData *data2 = [[NSData alloc] initWithData:[response2 dataUsingEncoding:NSASCIIStringEncoding]];
+	[outgoingConnection write:(const uint8_t *)[data2 bytes] maxLength:[data2 length]];
+
+	NSString *response3  = @"JOIN #chat";
+	NSData *data3 = [[NSData alloc] initWithData:[response3 dataUsingEncoding:NSASCIIStringEncoding]];
+	[outgoingConnection write:(const uint8_t *)[data3 bytes] maxLength:[data3 length]];
+	p = 1;
+}
+ 
+}
 @end
 
 

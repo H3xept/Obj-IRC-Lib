@@ -4,6 +4,7 @@
 @interface ConnectionController : NSObject <NSStreamDelegate> {
 	NSInputStream *ingoingConnection;
 	NSOutputStream *outgoingConnection;
+	NSString* dataStream;
 }
 @property connectionState state;
 
