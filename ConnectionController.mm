@@ -62,9 +62,11 @@
 			break;
 		case NSStreamEventHasSpaceAvailable:
 			if(!self->authenticated){
-				BOOL result = [self handShake];
-				if(result==YES){
-				self->authenticated = YES;
+					BOOL result = [self handShake];
+					if(result==YES){
+					self->authenticated = YES;
+					
+					[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(ping) userInfo:nil repeats:YES];
 				}
 			}
 			break;
@@ -79,9 +81,9 @@
 -(void)handleConnected
 {	
 	if(self.state == kStateDisconnected){
-	const char* host = [self.HOST cStringUsingEncoding:[NSString defaultCStringEncoding]];
-	NSLog(@"%s Connected to %s:%d",IRC_NAME,host,self.PORT);
-	self.state = kStateConnected;
+		const char* host = [self.HOST cStringUsingEncoding:[NSString defaultCStringEncoding]];
+		NSLog(@"%s Connected to %s:%d",IRC_NAME,host,self.PORT);
+		self.state = kStateConnected;
 	}
 }
 
@@ -95,7 +97,19 @@
 			dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
 		}
 		if(dataStream){
+			
 			printf("%s %s",IRC_NAME,[self simpleCStringConvert:dataStream]);
+
+			NSArray *arr = [dataStream componentsSeparatedByString:@"\n"];
+			for (int i = 0; i < [arr count]; ++i) {
+				if ([arr[i] hasPrefix:@"PING"]) {
+					NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
+					NSString *response = [NSString stringWithFormat:@"pong %@\r\n", pingback];
+					NSLog(@"--> %@", response);
+					[outgoingConnection write:(const uint8_t *)[response UTF8String] maxLength:[response length]];
+				}
+			}
+
 		}
 	}
 }
@@ -121,20 +135,18 @@
 -(BOOL)handShake{
 	uint8_t *sendStr = [[IRCProtocol sharedInstance] generateHandShake:self.nick Password:self.pass Mode:self.mode RealName:self.name];
 	int conn = [outgoingConnection write:(const uint8_t *)sendStr maxLength:strlen((char *)sendStr)];
+
 	if(conn != -1){
 		return 1;
 	}
 	return 0;
 }
 
+-(BOOL)ping
+{
+	//printf("ping!\n");
+
+	return TRUE;
+}
+
 @end
-
-
-
-
-
-
-
-
-
-

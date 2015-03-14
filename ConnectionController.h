@@ -21,5 +21,7 @@
 -(void)handleBytesAvailable;
 -(void)handleConnectionError;
 -(void)handleDisconnected;
+
 -(BOOL)handShake;
+-(BOOL)ping;
 @end
