@@ -104,7 +104,7 @@
 			for (int i = 0; i < [arr count]; ++i) {
 				if ([arr[i] hasPrefix:@"PING"]) {
 					NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
-					NSString *response = [NSString stringWithFormat:@"pong %@\r\n", pingback];
+					NSString *response = [NSString stringWithFormat:@"PONG %@\r\n", pingback];
 					NSLog(@"--> %@", response);
 					[outgoingConnection write:(const uint8_t *)[response UTF8String] maxLength:[response length]];
 				}
