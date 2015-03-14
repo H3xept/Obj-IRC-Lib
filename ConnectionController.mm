@@ -4,8 +4,6 @@
 #define HOST @"irc.saurik.com"
 #define PORT 6667
 
-int p;
-
 @interface ConnectionController()
 -(const char*)simpleCStringConvert:(NSString*)string;
 @end
@@ -89,6 +87,7 @@ int p;
 			if(!hasReceivedData){
 				hasReceivedData = YES;
 				[self joinChat];
+				NSLog(@"DOPE!!");
 			}
 		}
 		if(dataStream){
@@ -116,27 +115,18 @@ int p;
 }
 
 -(void)joinChat{
-	if(!p){
- 	NSLog(@"UMH");
 
-	NSString *response4  = @"PASS Try";
-	NSData *data4 = [[NSData alloc] initWithData:[response4 dataUsingEncoding:NSASCIIStringEncoding]];
-	[outgoingConnection write:(const uint8_t *)[data4 bytes] maxLength:[data4 length]];
+ 	NSLog(@"Sending handshake");
 
-	NSString *response  = @"NICK Try";
-	NSData *data = [[NSData alloc] initWithData:[response dataUsingEncoding:NSASCIIStringEncoding]];
-	[outgoingConnection write:(const uint8_t *)[data bytes] maxLength:[data length]];
+	uint8_t *buf1 = (uint8_t *)[[NSString stringWithFormat:@"PASS x\r\n"] UTF8String];
+	//NSData *data4 = [[NSData alloc] initWithData:[response4 dataUsingEncoding:NSASCIIStringEncoding]];
+	[outgoingConnection write:(const uint8_t *)buf1 maxLength:strlen((char *)buf1)];
 
-	NSString *response2  = @"USER Try 0 * :Try";
-	NSData *data2 = [[NSData alloc] initWithData:[response2 dataUsingEncoding:NSASCIIStringEncoding]];
-	[outgoingConnection write:(const uint8_t *)[data2 bytes] maxLength:[data2 length]];
+	uint8_t *buf2 = (uint8_t *)[[NSString stringWithFormat:@"NICK x\r\n"] UTF8String];
+	[outgoingConnection write:(const uint8_t *)buf2 maxLength:strlen((char *)buf2)];
 
-	NSString *response3  = @"JOIN #chat";
-	NSData *data3 = [[NSData alloc] initWithData:[response3 dataUsingEncoding:NSASCIIStringEncoding]];
-	[outgoingConnection write:(const uint8_t *)[data3 bytes] maxLength:[data3 length]];
-	p = 1;
-	sleep(2);
-}
+	uint8_t *buf3 = (uint8_t *)[[NSString stringWithFormat:@"USER x 0 * :xx\r\n"] UTF8String];
+	[outgoingConnection write:(const uint8_t *)buf3 maxLength:strlen((char *)buf3)];
  
 }
 @end
