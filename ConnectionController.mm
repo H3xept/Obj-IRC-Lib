@@ -1,7 +1,7 @@
 #import "ConnectionController.h"
 #import "SharedDefine.h"
 
-#define HOST @"localhost"
+#define HOST @"irc.saurik.com"
 #define PORT 6667
 
 int p;
@@ -59,7 +59,6 @@ int p;
 			break;
 		case NSStreamEventHasSpaceAvailable:
 			NSLog(@"SPACE!");
-			[self joinChat];
 			break;
 		}
 }
@@ -86,6 +85,11 @@ int p;
 		rLen = [ingoingConnection read:buf maxLength:sizeof(buf)];
 		if(rLen > 0){//GOT DATA
 			__unused NSString* dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
+			NSLog(@"DATA? %@", [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding]);
+			if(!hasReceivedData){
+				hasReceivedData = YES;
+				[self joinChat];
+			}
 		}
 		if(dataStream){
 			printf("%s %s",IRC_NAME,[self simpleCStringConvert:dataStream]);
@@ -111,9 +115,14 @@ int p;
 	return str;
 }
 
-- (void)joinChat{
+-(void)joinChat{
 	if(!p){
  	NSLog(@"UMH");
+
+	NSString *response4  = @"PASS Try";
+	NSData *data4 = [[NSData alloc] initWithData:[response4 dataUsingEncoding:NSASCIIStringEncoding]];
+	[outgoingConnection write:(const uint8_t *)[data4 bytes] maxLength:[data4 length]];
+
 	NSString *response  = @"NICK Try";
 	NSData *data = [[NSData alloc] initWithData:[response dataUsingEncoding:NSASCIIStringEncoding]];
 	[outgoingConnection write:(const uint8_t *)[data bytes] maxLength:[data length]];
@@ -126,6 +135,7 @@ int p;
 	NSData *data3 = [[NSData alloc] initWithData:[response3 dataUsingEncoding:NSASCIIStringEncoding]];
 	[outgoingConnection write:(const uint8_t *)[data3 bytes] maxLength:[data3 length]];
 	p = 1;
+	sleep(2);
 }
  
 }
