@@ -3,7 +3,7 @@
 @implementation Protocol
 
 +(instancetype)sharedInstance{
-	static Protocol privateProtocolController = nil;
+	static Protocol *privateProtocolController = nil;
 	if(!privateProtocolController){
 		privateProtocolController = [[self alloc] init];
 	}
