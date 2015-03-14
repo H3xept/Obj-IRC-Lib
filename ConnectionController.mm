@@ -66,7 +66,7 @@
 					if(result==YES){
 					self->authenticated = YES;
 					
-					[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(ping) userInfo:nil repeats:YES];
+					[NSTimer scheduledTimerWithTimeInterval:110 target:self selector:@selector(ping) userInfo:nil repeats:YES];
 				}
 			}
 			break;
@@ -104,9 +104,9 @@
 			for (int i = 0; i < [arr count]; ++i) {
 				if ([arr[i] hasPrefix:@"PING"]) {
 					NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
-					NSString *response = [NSString stringWithFormat:@"pong %@\r\n", pingback];
-					NSLog(@"--> %@", response);
-					[outgoingConnection write:(const uint8_t *)[response UTF8String] maxLength:[response length]];
+					NSString *response = [NSString stringWithFormat:@"pong %@", pingback];
+					[self send:response];
+
 				}
 			}
 
@@ -144,9 +144,11 @@
 
 -(BOOL)ping
 {
-	//printf("ping!\n");
-
-	return TRUE;
+	int conn = [self send:@"PING : KEEP-ALIVE"];
+	if(conn != -1){
+		return 1;
+	}
+	return 0;
 }
 
 -(BOOL)send:(NSString*)str
@@ -159,7 +161,7 @@
 		return 1;
 	else
 		return 0;
-	
+
 	}
 	return 0;
 }
