@@ -2,6 +2,14 @@
 
 @implementation Protocol
 
++(instancetype)sharedInstance{
+	static Protocol privateProtocolController = nil;
+	if(!privateProtocolController){
+		privateProtocolController = [[self alloc] init];
+	}
+	return privateProtocolController;
+}
+
 -(void)handShake{
 
  	/* Previousy was used 
