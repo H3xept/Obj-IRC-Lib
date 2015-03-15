@@ -1,3 +1,20 @@
+/*
+*	Obj-IRC –– IRCProtocol.mm
+*
+*	This code is under the Apache 1.0 license.
+*	Please not that this version may differ
+*	significantly from other branches in the
+*	repo.
+*
+*	---
+*	
+*	Currently implemented commands:
+*	
+*	- handshake
+*	- ping
+*
+*/
+
 #import "IRCProtocol.h"
 #import "IRCMessage.h"
 
@@ -11,16 +28,9 @@
 	return privateProtocolController;
 }
 
--(uint8_t *)generateHandShake:(NSString*)nick Password:(NSString*)pass Mode:(int)mode RealName:(NSString*)name{
-
- 	/* Previousy was used 
-	NSData *data4 = [[NSData alloc] initWithData:[response4 dataUsingEncoding:NSASCIIStringEncoding]];
-	replaced by uint8_t
-	*/
-
-	uint8_t *buf = (uint8_t *)[[NSString stringWithFormat:@"PASS %@\r\nNICK %@\r\nUSER %@ %d * :%@\r\n",pass,nick,nick,mode,name] UTF8String];
-	return buf;
-
+-(NSString *)craftHandshakePacket:(NSString*)nick Password:(NSString*)pass Mode:(int)mode RealName:(NSString*)name
+{
+	return [NSString stringWithFormat:@"PASS %@\r\nNICK %@\r\nUSER %@ %d * :%@", pass, nick, nick, mode, name];
 }
 
 -(IRCMessage*)parse:(NSString*)dataStream{

@@ -14,8 +14,7 @@ int main(int argc, const char * argv[])
     	[NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:client withObject:nil];
 
     	while(1){
-    	sleep(5);
-    	//KEEPIN' CONNECTION ALIVE
+    	   sleep(5); //KEEPIN' CONNECTION ALIVE
     	}
     }
 

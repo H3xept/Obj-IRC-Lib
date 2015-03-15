@@ -1,3 +1,25 @@
+/*
+*	Obj-IRC –– ConnectionController.h
+*
+*	This code is under the Apache 1.0 license.
+*	Please not that this version may differ
+*	significantly from other branches in the
+*	repo.
+*
+*	---
+*	
+*	Currently implemented commands:
+*	
+*	- handshake
+*	- ping
+*
+*/
+
+#define __DEBUG
+
+#define CARRIAGE @"\r\n"
+#define PING_TIME 110
+
 #import <Foundation/Foundation.h>
 #import "SharedDefine.h"
 
@@ -9,6 +31,7 @@
 	BOOL authenticated;
 	NSMutableArray* cmdQueue;
 }
+
 @property connectionState state;
 @property (assign) NSString* HOST;
 @property (assign) int PORT;
@@ -24,7 +47,9 @@
 -(void)handleBytesAvailable;
 -(void)handleConnectionError;
 -(void)handleDisconnected;
--(BOOL)handShake;
--(BOOL)ping;
--(BOOL)send:(NSString*)str;
+-(BOOL)send:(NSString*)cmd;
+
+-(int)handShake;
+-(int)ping;
+
 @end
