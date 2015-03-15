@@ -28,6 +28,8 @@
 @property int mode;
 @property BOOL printIncomingStream;
 
+-(BOOL)getAuthenticated;
+
 -(void)establishConnection;
 -(void)handleEventNone;
 -(void)handleConnected;

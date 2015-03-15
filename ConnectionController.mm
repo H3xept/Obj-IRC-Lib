@@ -19,6 +19,11 @@
 	return self;
 }
 
+-(BOOL)getAuthenticated
+{
+	return self->didSendPong;
+}
+
 -(void)establishConnection
 {
     CFReadStreamRef ingoingConnectionCF;
@@ -198,6 +203,7 @@
 				[self send:[NSString stringWithFormat:@"PONG :%@", pingback]];
 			}
 		}
+		didSendPong = YES;
 	}
 	[self clientHasReceivedBytes:[[IRCProtocol sharedInstance] parse:self->dataStream]]; 
 }

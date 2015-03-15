@@ -16,7 +16,7 @@
 	return [NSString stringWithFormat:@"PASS %@\r\nNICK %@\r\nUSER %@ %d * :%@", pass, nick, nick, mode, name];
 }
 
--(void)craftJoinPacket:(NSString*)channel{
+-(NSString *)craftJoinPacket:(NSString*)channel{
 	return [NSString stringWithFormat:@"JOIN %@",channel];
 }
 
