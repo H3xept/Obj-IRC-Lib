@@ -22,6 +22,8 @@
 
 #import <Foundation/Foundation.h>
 #import "SharedDefine.h"
+#import "IRCProtocol.h"
+#import "IRCMessage.h"
 
 @interface ConnectionController : NSObject <NSStreamDelegate> {
 	NSInputStream *ingoingConnection;
@@ -50,7 +52,6 @@
 -(void)handleDisconnected;
 -(BOOL)send:(NSString*)cmd;
 -(void)clientHasReceivedBytes:(IRCMessage*)message;
-
 -(int)handshake;
 -(int)ping;
 

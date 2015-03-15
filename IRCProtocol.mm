@@ -35,19 +35,20 @@
 
 -(IRCMessage*)parse:(NSString*)dataStream{
 	if([[dataStream componentsSeparatedByString:@" "][0] hasPrefix:@":"]){
+		
 		IRCMessage* message = [[IRCMessage alloc] init];
 
 		message.prefix = [dataStream componentsSeparatedByString:@" "][0];
-		NSLog(@"PREFIX %@",message.prefix);
+		//NSLog(@"PREFIX %@",message.prefix);
 
 		message.command = [dataStream componentsSeparatedByString:@" "][1];
-		NSLog(@"COMMAND %@",message.command);
+		//NSLog(@"COMMAND %@",message.command);
 
 		message.params = [dataStream componentsSeparatedByString:@" "][2];
-		NSLog(@"PARAMS %@",message.params);
+		//NSLog(@"PARAMS %@",message.params);
 
 		message.trailing = [dataStream componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",message.params]][1];
-		NSLog(@"TRAILING %@",message.trailing);
+		//NSLog(@"TRAILING %@",message.trailing);
 		return message;
 	}
 	return nil;

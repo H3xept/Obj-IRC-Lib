@@ -21,7 +21,7 @@ int main(int argc, const char * argv[])
         testClass *c = [[testClass alloc] init];
 
         ConnectionController* client = [[ConnectionController alloc] init];
-    	[client setHOST:@"irc.cracksby.kim"];
+    	[client setHOST:@"irc.saurik.com"];
     	[client setPORT:6667];
     	[client setNick:@"Test"];
     	[client setName:@"Test"];

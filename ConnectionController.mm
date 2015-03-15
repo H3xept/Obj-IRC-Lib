@@ -16,9 +16,6 @@
 */
 
 #import "ConnectionController.h"
-#import "SharedDefine.h"
-#import "IRCProtocol.h"
-#import "IRCMessage.h"
 
 @interface ConnectionController()
 -(const char*)simpleCStringConvert:(NSString*)string;
@@ -107,14 +104,14 @@
 {	
 	if(self.state == kStateDisconnected){
 		const char* host = [self.HOST cStringUsingEncoding:[NSString defaultCStringEncoding]];
-		NSLog(@"%s Connected to %s:%d",IRC_NAME,host,self.PORT);
+		NSLog(@"Connected to %s:%d",host,self.PORT);
 		self.state = kStateConnected;
 	}
 }
 
 -(void)handleBytesAvailable
 {
-	uint8_t buf[1024];
+	uint8_t buf[2048];
 	int rLen; 
 	while([ingoingConnection hasBytesAvailable]){
 		rLen = [ingoingConnection read:buf maxLength:sizeof(buf)];
@@ -123,7 +120,7 @@
 		}
 		if(self->dataStream){
 
-			printf("%s %s",IRC_NAME,[self simpleCStringConvert:self->dataStream]);
+			printf("%s",[self simpleCStringConvert:self->dataStream]);
 			[self parseBuffer:self->dataStream];
 
 			NSArray *arr = [self->dataStream componentsSeparatedByString:@"\n"];
@@ -140,13 +137,13 @@
 -(void)handleConnectionError
 {
 	const char* host = [self simpleCStringConvert:self.HOST];
-	printf("%s There was an error while connecting to <%s:%d>",IRC_NAME,host,self.PORT);
+	printf("There was an error while connecting to <%s:%d>",host,self.PORT);
 }
 
 -(void)handleDisconnected
 { 
 	const char* host = [self simpleCStringConvert:self.HOST];
-	printf("%s Disconnected from <%s:%d>",IRC_NAME,host,self.PORT);
+	printf("Disconnected from <%s:%d>",host,self.PORT);
 }
 
 -(const char*)simpleCStringConvert:(NSString*)string
@@ -195,7 +192,13 @@
 
 -(void)parseBuffer:(NSString*)dataStream
 {
-	__unused IRCMessage* message = [[IRCProtocol sharedInstance] parse:self->dataStream];
+	[self clientHasReceivedBytes:[[IRCProtocol sharedInstance] parse:self->dataStream]]; 
+}
+
+-(void)clientHasReceivedBytes:(IRCMessage*)message{
+	if(self.delegate){
+		[self.delegate clientHasReceivedBytes:message];
+	}else{fprintf(stderr, "%s\n","[!] NO DELEGATE SETTED!");}
 }
 
 @end
