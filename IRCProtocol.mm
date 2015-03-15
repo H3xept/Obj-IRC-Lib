@@ -25,7 +25,7 @@
 		message.command = [dataStream componentsSeparatedByString:@" "][1];
 		message.params = [dataStream componentsSeparatedByString:@" "][2];
 		message.trailing = [dataStream componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",message.params]][1];
-
+		
 		return message;
 	}
 	return nil;
