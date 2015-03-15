@@ -49,7 +49,7 @@
 -(void)handleDisconnected;
 -(BOOL)send:(NSString*)cmd;
 
--(int)handShake;
+-(int)handshake;
 -(int)ping;
 
 @end

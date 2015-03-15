@@ -57,7 +57,6 @@
 	[outgoingConnection open];
 
 	[[NSRunLoop currentRunLoop] run];
-
 }
 
 -(void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent
@@ -101,7 +100,7 @@
 
 -(void)handleEventNone
 {
-	
+	return;
 }
 
 -(void)handleConnected
@@ -161,17 +160,16 @@
 	if(self.state == kStateConnected){
 		const uint8_t* buffer = (const uint8_t*)[[NSString stringWithFormat:@"%@%@", cmd, CARRIAGE] UTF8String];
 		if([outgoingConnection write:buffer maxLength:strlen((char *)buffer)] == 0)
-			return(0);
+			return 0;
 		else
-			return(1);
+			return 1;
 	}
 
-	return(-1);
+	return -1;
 }
 
 -(int)handshake
 {
-
 #ifdef __DEBUG
 	fprintf(stdout, "[+] Sending handshake...\n");
 #endif
@@ -198,9 +196,6 @@
 -(void)parseBuffer:(NSString*)dataStream
 {
 	__unused IRCMessage* message = [[IRCProtocol sharedInstance] parse:self->dataStream];
-
 }
 
 @end
-
-
