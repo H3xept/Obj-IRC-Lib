@@ -24,12 +24,18 @@
 	if([[dataStream componentsSeparatedByString:@" "][0] hasPrefix:@":"]){
 
 		IRCMessage* message = [[IRCMessage alloc] init];
-
-		message.prefix = [dataStream componentsSeparatedByString:@" "][0];
-		message.command = [dataStream componentsSeparatedByString:@" "][1];
+		try{
+			message.prefix = [dataStream componentsSeparatedByString:@" "][0];
+		}catch(NSException* e){}
+		try{
+			message.command = [dataStream componentsSeparatedByString:@" "][1];
+		}catch(NSException* e){}
+		try{
 		message.params = [dataStream componentsSeparatedByString:@" "][2];
+		}catch(NSException* e){}
+		try{
 		message.trailing = [dataStream componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",message.params]][1];
-		
+		}catch(NSException* e){}
 		return message;
 	}
 	return nil;
