@@ -1,3 +1,20 @@
+/*
+*	Obj-IRC –– ConnectionController.mm
+*
+*	This code is under the Apache 1.0 license.
+*	Please not that this version may differ
+*	significantly from other branches in the
+*	repo.
+*
+*	---
+*	
+*	Currently implemented commands:
+*	
+*	- handshake
+*	- ping
+*
+*/
+
 #import "ConnectionController.h"
 #import "SharedDefine.h"
 #import "IRCProtocol.h"
@@ -8,7 +25,8 @@
 
 @implementation ConnectionController
 
--(instancetype)init{
+-(instancetype)init 
+{
 	self = [super init];
 	self.state = kStateDisconnected;
 	self.HOST = @"localhost";
@@ -41,7 +59,6 @@
 
 }
 
-
 -(void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent
 {
 	switch(streamEvent){
@@ -61,21 +78,30 @@
 			[self handleDisconnected];
 			break;
 		case NSStreamEventHasSpaceAvailable:
-			if(!self->authenticated){
-					BOOL result = [self handShake];
-					if(result==YES){
+			if(!self->authenticated) {
+				int result = [self handshake];
+				if(result == 0) {
+#ifdef __DEBUG
+	fprintf(stdout, "[+] Handshake successful!\n");
+#endif	
 					self->authenticated = YES;
-					
-					[NSTimer scheduledTimerWithTimeInterval:110 target:self selector:@selector(ping) userInfo:nil repeats:YES];
+
+					[NSTimer scheduledTimerWithTimeInterval:PING_TIME target:self selector:@selector(ping) userInfo:nil repeats:YES];
+				} else if(result == 1) {
+					fprintf(stderr, "[!] Handshake has failed. Cooldown for 10 secs...\n");
+					sleep(10);
+				} else if(result == -1) {
+					fprintf(stderr, "[!] Handshake has failed. Please connect to the server first.\n");
 				}
 			}
+			
 			break;
-		}
+	}
 }
 
 -(void)handleEventNone
 {
-	printf("%s",IRC_NAME);
+	
 }
 
 -(void)handleConnected
@@ -98,18 +124,15 @@
 		}
 		if(dataStream){
 			
-			printf("%s %s",IRC_NAME,[self simpleCStringConvert:dataStream]);
+			printf("%s", [self simpleCStringConvert:dataStream]);
 
 			NSArray *arr = [dataStream componentsSeparatedByString:@"\n"];
 			for (int i = 0; i < [arr count]; ++i) {
 				if ([arr[i] hasPrefix:@"PING"]) {
 					NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
-					NSString *response = [NSString stringWithFormat:@"pong %@", pingback];
-					[self send:response];
-
+					[self send:[NSString stringWithFormat:@"PONG :%@", pingback]];
 				}
 			}
-
 		}
 	}
 }
@@ -132,18 +155,38 @@
 	return str;
 }
 
--(BOOL)handShake{
-	uint8_t *sendStr = [[IRCProtocol sharedInstance] generateHandShake:self.nick Password:self.pass Mode:self.mode RealName:self.name];
-	int conn = [outgoingConnection write:(const uint8_t *)sendStr maxLength:strlen((char *)sendStr)];
-
-	if(conn != -1){
-		return 1;
+-(BOOL)send:(NSString*)cmd
+{
+	if(self.state == kStateConnected){
+		const uint8_t* buffer = (const uint8_t*)[[NSString stringWithFormat:@"%@%@", cmd, CARRIAGE] UTF8String];
+		if([outgoingConnection write:buffer maxLength:strlen((char *)buffer)] == 0)
+			return(0);
+		else
+			return(1);
 	}
+
+	return(-1);
+}
+
+-(int)handshake
+{
+
+#ifdef __DEBUG
+	fprintf(stdout, "[+] Sending handshake...\n");
+#endif
+
+	NSString *hndshk_packet = [[IRCProtocol sharedInstance] craftHandshakePacket:self.nick Password:self.pass Mode:self.mode RealName:self.name];
+	if([self send:hndshk_packet] == -1) {
+		fprintf(stderr, "[!] Error: Are you connected?\n");
+		return -1;
+	}
+
 	return 0;
 }
 
--(BOOL)ping
+-(int)ping
 {
+
 	int conn = [self send:@"PING :hey!"];
 	if(conn != -1){
 		return 1;
@@ -151,27 +194,4 @@
 	return 0;
 }
 
--(BOOL)send:(NSString*)str
-{
-	if(self.state == kStateConnected){
-
-	const uint8_t* buffer = (const uint8_t*)[[NSString stringWithFormat:@"%@\r\n",str] UTF8String];
-	int conn = [outgoingConnection write:buffer maxLength:strlen((char *)buffer)];
-	if(conn == 1)
-		return 1;
-	else
-		return 0;
-
-	}
-	return 0;
-}
-
 @end
-
-
-
-
-
-
-
-
