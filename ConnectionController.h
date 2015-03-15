@@ -38,6 +38,7 @@
 -(void)clientHasReceivedBytes:(IRCMessage*)message;
 -(int)handshake;
 -(int)ping;
+-(int)join:(NSString*)channel;
 -(void)endConnection;
 
 @end

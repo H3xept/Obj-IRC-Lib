@@ -164,6 +164,21 @@
 	return 0;
 }
 
+-(int)join:(NSString*)channel
+{
+#ifdef __DEBUG
+	fprintf(stdout, "[+] Joining channel...\n");
+#endif
+
+	NSString *join_packet = [[IRCProtocol sharedInstance] craftJoinPacket:channel];
+	if([self send:join_packet] == -1) {
+		fprintf(stderr, "[!] Error: Are you connected?\n");
+		return -1;
+	}
+
+	return 0;
+}
+
 -(int)ping
 {
 	int conn = [self send:@"PING :hey!"];
@@ -172,7 +187,6 @@
 	}
 	return 0;
 }
-
 
 -(void)parseBuffer:(NSString*)dataStream
 {	
