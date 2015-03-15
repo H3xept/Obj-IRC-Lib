@@ -7,3 +7,5 @@ Before you start dumping this lib into your code, please realize that is is pure
 
 ## General explanation
 There isn't really much to explain, but I'll get this done.<br>`ConnectionController.h` and `ConnectionController.mm` handle and mantain the general connection stuff (sockets, etc.). `IRCProtocol.h` and `IRCProtocol.mm` define some crafting rules for packets. These are just strings, the real work is done by the `ConnectionController`. Other files are self-explanatory.
+
+## How to use it

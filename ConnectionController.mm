@@ -150,10 +150,11 @@
 
 -(int)handshake
 {
+// ---------------------------------------
 #ifdef __DEBUG
 	fprintf(stdout, "[+] Sending handshake...\n");
 #endif
-
+// ---------------------------------------
 	NSString *hndshk_packet = [[IRCProtocol sharedInstance] craftHandshakePacket:self.nick Password:self.pass Mode:self.mode RealName:self.name];
 	if([self send:hndshk_packet] == -1) {
 		fprintf(stderr, "[!] Error: Are you connected?\n");

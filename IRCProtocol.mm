@@ -16,6 +16,10 @@
 	return [NSString stringWithFormat:@"PASS %@\r\nNICK %@\r\nUSER %@ %d * :%@", pass, nick, nick, mode, name];
 }
 
+-(void)craftJoinPacket:(NSString*)channel{
+	return [NSString stringWithFormat:@"JOIN %@",channel];
+}
+
 -(IRCMessage*)parse:(NSString*)dataStream{
 	if([[dataStream componentsSeparatedByString:@" "][0] hasPrefix:@":"]){
 
