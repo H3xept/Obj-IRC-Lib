@@ -32,6 +32,7 @@
 	NSMutableArray* cmdQueue;
 }
 
+@property (assign) id delegate;
 @property connectionState state;
 @property (assign) NSString* HOST;
 @property (assign) int PORT;
@@ -48,6 +49,7 @@
 -(void)handleConnectionError;
 -(void)handleDisconnected;
 -(BOOL)send:(NSString*)cmd;
+-(void)clientHasReceivedBytes:(IRCMessage*)message;
 
 -(int)handshake;
 -(int)ping;
