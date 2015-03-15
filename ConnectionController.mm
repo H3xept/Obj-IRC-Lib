@@ -190,11 +190,11 @@
 	fprintf(stdout, "[+] Sending keepalive...\n");
 #endif
 
-	[self send:@"PING :hey!"];
-
-	if(conn != -1){
-		return 1;
+	if([self send:@"PING :hey!"] == -1) {
+		fprintf(stderr, "[!] Error: Are you connected?\n");
+		return -1;
 	}
+
 	return 0;
 }
 
