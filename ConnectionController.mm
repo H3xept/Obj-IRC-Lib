@@ -144,7 +144,7 @@
 
 -(BOOL)ping
 {
-	int conn = [self send:@"PING : KEEP-ALIVE"];
+	int conn = [self send:@"PING :hey!"];
 	if(conn != -1){
 		return 1;
 	}
