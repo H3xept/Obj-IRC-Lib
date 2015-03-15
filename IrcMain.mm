@@ -5,7 +5,7 @@ int main(int argc, const char * argv[])
 {
     @autoreleasepool{
     	ConnectionController* client = [[ConnectionController alloc] init];
-    	[client setHOST:@"irc.saurik.com"];
+    	[client setHOST:@"irc.cracksby.kim"];
     	[client setPORT:6667];
     	[client setNick:@"Test"];
     	[client setName:@"Test"];

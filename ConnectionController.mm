@@ -1,6 +1,7 @@
 #import "ConnectionController.h"
 #import "SharedDefine.h"
 #import "IRCProtocol.h"
+#import "IRCMessage.h"
 
 @interface ConnectionController()
 -(const char*)simpleCStringConvert:(NSString*)string;
@@ -65,7 +66,6 @@
 					BOOL result = [self handShake];
 					if(result==YES){
 					self->authenticated = YES;
-					
 					[NSTimer scheduledTimerWithTimeInterval:110 target:self selector:@selector(ping) userInfo:nil repeats:YES];
 				}
 			}
@@ -94,13 +94,15 @@
 	while([ingoingConnection hasBytesAvailable]){
 		rLen = [ingoingConnection read:buf maxLength:sizeof(buf)];
 		if(rLen > 0){//GOT DATA
-			dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
+			self->dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
 		}
-		if(dataStream){
+		if(self->dataStream){
 			
-			printf("%s %s",IRC_NAME,[self simpleCStringConvert:dataStream]);
+			printf("%s %s",IRC_NAME,[self simpleCStringConvert:self->dataStream]);
+			[self parseBuffer:self->dataStream];
 
-			NSArray *arr = [dataStream componentsSeparatedByString:@"\n"];
+
+			NSArray *arr = [self->dataStream componentsSeparatedByString:@"\n"];
 			for (int i = 0; i < [arr count]; ++i) {
 				if ([arr[i] hasPrefix:@"PING"]) {
 					NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
@@ -135,7 +137,6 @@
 -(BOOL)handShake{
 	uint8_t *sendStr = [[IRCProtocol sharedInstance] generateHandShake:self.nick Password:self.pass Mode:self.mode RealName:self.name];
 	int conn = [outgoingConnection write:(const uint8_t *)sendStr maxLength:strlen((char *)sendStr)];
-
 	if(conn != -1){
 		return 1;
 	}
@@ -164,6 +165,12 @@
 
 	}
 	return 0;
+}
+
+-(void)parseBuffer:(NSString*)dataStream
+{
+	__unused IRCMessage* message = [[IRCProtocol sharedInstance] parse:self->dataStream];
+
 }
 
 @end

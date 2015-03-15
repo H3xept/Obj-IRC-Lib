@@ -2,7 +2,7 @@ CC = clang
 
 FRAMEWORKS = -framework Foundation
 
-SOURCE = IrcMain.mm ConnectionController.mm IRCProtocol.mm
+SOURCE = IrcMain.mm ConnectionController.mm IRCProtocol.mm IRCMessage.mm
 
 CFLAGS = -Wall -Werror -g $(SOURCE)
 LDFLAGS = $(LIBRARIES) $(FRAMEWORKS)

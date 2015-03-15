@@ -7,6 +7,7 @@
 	NSString* dataStream;
 	NSMutableArray* parsedBuffer;
 	BOOL authenticated;
+	NSMutableArray* cmdQueue;
 }
 @property connectionState state;
 @property (assign) NSString* HOST;
@@ -15,6 +16,7 @@
 @property (assign) NSString* name;
 @property (assign) NSString* pass;
 @property int mode;
+
 
 -(void)establishConnection;
 -(void)handleEventNone;
