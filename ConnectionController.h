@@ -1,20 +1,3 @@
-/*
-*	Obj-IRC –– ConnectionController.h
-*
-*	This code is under the Apache 1.0 license.
-*	Please not that this version may differ
-*	significantly from other branches in the
-*	repo.
-*
-*	---
-*	
-*	Currently implemented commands:
-*	
-*	- handshake
-*	- ping
-*
-*/
-
 #define __DEBUG
 
 #define CARRIAGE @"\r\n"
@@ -32,6 +15,7 @@
 	NSMutableArray* parsedBuffer;
 	BOOL authenticated;
 	NSMutableArray* cmdQueue;
+	BOOL didSendPong;
 }
 
 @property (assign) id delegate;
@@ -42,7 +26,7 @@
 @property (assign) NSString* name;
 @property (assign) NSString* pass;
 @property int mode;
-
+@property BOOL printIncomingStream;
 
 -(void)establishConnection;
 -(void)handleEventNone;
@@ -50,9 +34,10 @@
 -(void)handleBytesAvailable;
 -(void)handleConnectionError;
 -(void)handleDisconnected;
--(BOOL)send:(NSString*)cmd;
+-(int)send:(NSString*)cmd;
 -(void)clientHasReceivedBytes:(IRCMessage*)message;
 -(int)handshake;
 -(int)ping;
+-(void)endConnection;
 
 @end

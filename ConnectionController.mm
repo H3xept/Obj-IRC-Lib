@@ -1,20 +1,3 @@
-/*
-*	Obj-IRC –– ConnectionController.mm
-*
-*	This code is under the Apache 1.0 license.
-*	Please not that this version may differ
-*	significantly from other branches in the
-*	repo.
-*
-*	---
-*	
-*	Currently implemented commands:
-*	
-*	- handshake
-*	- ping
-*
-*/
-
 #import "ConnectionController.h"
 
 @interface ConnectionController()
@@ -78,9 +61,12 @@
 			if(!self->authenticated) {
 				int result = [self handshake];
 				if(result == 0) {
+// ---------------------------------------
 #ifdef __DEBUG
 	fprintf(stdout, "[+] Handshake successful!\n");
 #endif	
+// ---------------------------------------
+
 					self->authenticated = YES;
 					[NSTimer scheduledTimerWithTimeInterval:PING_TIME target:self selector:@selector(ping) userInfo:nil repeats:YES];
 				} else if(result == 1) {
@@ -113,23 +99,17 @@
 {
 	uint8_t buf[2048];
 	int rLen; 
+
 	while([ingoingConnection hasBytesAvailable]){
 		rLen = [ingoingConnection read:buf maxLength:sizeof(buf)];
 		if(rLen > 0){//GOT DATA
 			self->dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
 		}
 		if(self->dataStream){
-
-			printf("%s",[self simpleCStringConvert:self->dataStream]);
+			if(self.printIncomingStream == YES)
+				printf("%s",[self simpleCStringConvert:self->dataStream]);
 			[self parseBuffer:self->dataStream];
 
-			NSArray *arr = [self->dataStream componentsSeparatedByString:@"\n"];
-			for (int i = 0; i < [arr count]; ++i) {
-				if ([arr[i] hasPrefix:@"PING"]) {
-					NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
-					[self send:[NSString stringWithFormat:@"PONG :%@", pingback]];
-				}
-			}
 		}
 	}
 }
@@ -144,6 +124,9 @@
 { 
 	const char* host = [self simpleCStringConvert:self.HOST];
 	printf("Disconnected from <%s:%d>",host,self.PORT);
+	self->authenticated = nil;
+	self->didSendPong = nil;
+	self.state = kStateDisconnected;
 }
 
 -(const char*)simpleCStringConvert:(NSString*)string
@@ -152,7 +135,7 @@
 	return str;
 }
 
--(BOOL)send:(NSString*)cmd
+-(int)send:(NSString*)cmd
 {
 	if(self.state == kStateConnected){
 		const uint8_t* buffer = (const uint8_t*)[[NSString stringWithFormat:@"%@%@", cmd, CARRIAGE] UTF8String];
@@ -191,7 +174,16 @@
 
 
 -(void)parseBuffer:(NSString*)dataStream
-{
+{	
+	if(!self->didSendPong){
+		NSArray *arr = [self->dataStream componentsSeparatedByString:@"\n"];
+		for (int i = 0; i < [arr count]; ++i) {
+			if ([arr[i] hasPrefix:@"PING"]) {
+				NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
+				[self send:[NSString stringWithFormat:@"PONG :%@", pingback]];
+			}
+		}
+	}
 	[self clientHasReceivedBytes:[[IRCProtocol sharedInstance] parse:self->dataStream]]; 
 }
 
@@ -201,4 +193,9 @@
 	}else{fprintf(stderr, "%s\n","[!] NO DELEGATE SETTED!");}
 }
 
+-(void)endConnection{
+	[ingoingConnection close];
+	[outgoingConnection close];
+	[self handleDisconnected];
+}
 @end

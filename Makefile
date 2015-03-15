@@ -10,5 +10,3 @@ OUT = -o main
 
 all:
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OUT)
-	
-#-v verbose REMEBMER H3X!

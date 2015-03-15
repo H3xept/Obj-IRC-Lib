@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
     	[client setName:@"Test"];
     	[client setPass:@"Test"];
     	[client setMode:0];
-
+        [client setPrintIncomingStream:YES];
         [client setDelegate:c];
 
     	[NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:client withObject:nil];

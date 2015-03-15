@@ -1,20 +1,3 @@
-/*
-*	Obj-IRC –– IRCProtocol.mm
-*
-*	This code is under the Apache 1.0 license.
-*	Please not that this version may differ
-*	significantly from other branches in the
-*	repo.
-*
-*	---
-*	
-*	Currently implemented commands:
-*	
-*	- handshake
-*	- ping
-*
-*/
-
 #import "IRCProtocol.h"
 #import "IRCMessage.h"
 
@@ -35,7 +18,7 @@
 
 -(IRCMessage*)parse:(NSString*)dataStream{
 	if([[dataStream componentsSeparatedByString:@" "][0] hasPrefix:@":"]){
-		
+
 		IRCMessage* message = [[IRCMessage alloc] init];
 
 		message.prefix = [dataStream componentsSeparatedByString:@" "][0];
