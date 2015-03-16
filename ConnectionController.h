@@ -8,13 +8,14 @@
 #import "IRCProtocol.h"
 #import "IRCMessage.h"
 
+@class IRCMessage;
+
 @interface ConnectionController : NSObject <NSStreamDelegate> {
 	NSInputStream *ingoingConnection;
 	NSOutputStream *outgoingConnection;
 	NSString* dataStream;
 	NSMutableArray* parsedBuffer;
 	BOOL authenticated;
-	NSMutableArray* cmdQueue;
 	BOOL didSendPong;
 }
 

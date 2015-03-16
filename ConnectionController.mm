@@ -2,6 +2,7 @@
 
 @interface ConnectionController()
 -(const char*)simpleCStringConvert:(NSString*)string;
+-(void)sendPingback;
 @end
 
 @implementation ConnectionController
@@ -16,6 +17,8 @@
 	self.name = @"User";
 	self.pass = @"Pass";
 	self.mode = 0;
+	self->didSendPong = NO;
+	self->authenticated = NO;
 	return self;
 }
 
@@ -66,6 +69,7 @@
 			if(!self->authenticated) {
 				int result = [self handshake];
 				if(result == 0) {
+
 // ---------------------------------------
 #ifdef __DEBUG
 	fprintf(stdout, "[+] Handshake successful!\n");
@@ -195,28 +199,38 @@
 
 -(void)parseBuffer:(NSString*)dataStream
 {	
-	if(!self->didSendPong){
-		NSArray *arr = [self->dataStream componentsSeparatedByString:@"\n"];
-		for (int i = 0; i < [arr count]; ++i) {
-			if ([arr[i] hasPrefix:@"PING"]) {
-				NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
-				[self send:[NSString stringWithFormat:@"PONG :%@", pingback]];
-			}
-		}
-		didSendPong = YES;
+	if(self->didSendPong == NO && self->authenticated == YES){
+		[self sendPingback];
 	}
 	[self clientHasReceivedBytes:[[IRCProtocol sharedInstance] parse:self->dataStream]]; 
 }
 
--(void)clientHasReceivedBytes:(IRCMessage*)message{
+-(void)clientHasReceivedBytes:(IRCMessage*)message
+{
 	if(self.delegate){
 		[self.delegate clientHasReceivedBytes:message];
 	}else{fprintf(stderr, "%s\n","[!] NO DELEGATE SETTED!");}
 }
 
--(void)endConnection{
+-(void)endConnection
+{
 	[ingoingConnection close];
 	[outgoingConnection close];
 	[self handleDisconnected];
+}
+
+-(void)sendPingback
+{
+	if(self->didSendPong == NO && self->authenticated == YES){
+		NSArray *arr = [self->dataStream componentsSeparatedByString:@"\n"];
+		for (int i = 0; i < [arr count]; ++i) {
+			if ([arr[i] hasPrefix:@"PING"]) {
+				NSString *pingback = [arr[i] componentsSeparatedByString:@"PING :"][1];
+				[self send:[NSString stringWithFormat:@"PONG :%@", pingback]];
+				didSendPong = YES;
+			}
+		}
+	}
+	
 }
 @end

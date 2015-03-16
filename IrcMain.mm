@@ -8,7 +8,7 @@
 
 -(void)clientHasReceivedBytes:(IRCMessage*)message {
 
-    NSLog(@"--> %@", message.prefix);
+    //NSLog(@"--> %@", message.trailing);
 
 }
 
@@ -21,7 +21,7 @@ int main(int argc, const char * argv[])
         testClass *c = [[testClass alloc] init];
 
         ConnectionController* client = [[ConnectionController alloc] init];
-        [client setHOST:@"irc.cracksby.kim"];
+        [client setHOST:@"irc.saurik.com"];
         [client setPORT:6667];
         [client setNick:@"Test"];
         [client setName:@"Test"];
@@ -29,11 +29,10 @@ int main(int argc, const char * argv[])
         [client setMode:0];
         [client setPrintIncomingStream:YES];
         [client setDelegate:c];
-
         [NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:client withObject:nil];
-
+        sleep(10);
         [client join:@"#example"];
-
+        [client send:[NSString stringWithFormat:@":%@ PRIVMSG #example Test",client.nick]];
         while(1){
             sleep(5);
         }
