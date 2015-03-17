@@ -20,25 +20,34 @@
 	return [NSString stringWithFormat:@"JOIN %@",channel];
 }
 
--(IRCMessage*)parse:(NSString*)dataStream{
-	if([[dataStream componentsSeparatedByString:@" "][0] hasPrefix:@":"]){
+-(NSMutableArray*)parse:(NSString*)dataStream{
+	NSMutableArray* data = [[NSMutableArray alloc] init];
+	for(NSString* msg in [dataStream componentsSeparatedByString:@"\r\n"]){
 
-		IRCMessage* message = [[IRCMessage alloc] init];
-		@try{
-			message.prefix = [dataStream componentsSeparatedByString:@" "][0];
-		}@catch(NSException* e){}
-		@try{
-			message.command = [dataStream componentsSeparatedByString:@" "][1];
-		}@catch(NSException* e){}
-		@try{
-		message.params = [dataStream componentsSeparatedByString:@" "][2];
-		}@catch(NSException* e){}
-		@try{
-		message.trailing = [dataStream componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",message.params]][1];
-		}@catch(NSException* e){}
-		return message;
+		if([[msg componentsSeparatedByString:@" "][0] hasPrefix:@":"] && ![msg isEqual:@""]){
+
+			IRCMessage* msg = [[IRCMessage alloc] init];
+
+			@try{
+				msg.prefix = [dataStream componentsSeparatedByString:@" "][0];
+			}@catch(NSException* e){}
+			@try{
+				msg.command = [dataStream componentsSeparatedByString:@" "][1];
+			}@catch(NSException* e){}
+			@try{
+			msg.params = [dataStream componentsSeparatedByString:@" "][2];
+			}@catch(NSException* e){}
+			@try{
+			msg.trailing = [dataStream componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",msg.params]][1];
+			}@catch(NSException* e){}
+
+		}
+
+	[data addObject:msg];
+
 	}
-	return nil;
+
+	return data;
 }
 
 @end

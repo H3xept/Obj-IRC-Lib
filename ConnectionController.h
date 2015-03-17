@@ -38,7 +38,7 @@
 -(void)handleConnectionError;
 -(void)handleDisconnected;
 -(int)send:(NSString*)cmd;
--(void)clientHasReceivedBytes:(IRCMessage*)message;
+-(void)clientHasReceivedBytes:(NSMutableArray*)messageArray;
 -(int)handshake;
 -(int)ping;
 -(int)join:(NSString*)channel;

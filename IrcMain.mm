@@ -6,9 +6,12 @@
 
 @implementation testClass
 
--(void)clientHasReceivedBytes:(IRCMessage*)message {
+-(void)clientHasReceivedBytes:(NSMutableArray*)messageArray{
 
     //NSLog(@"--> %@", message.trailing);
+    for(IRCMessage* msg in messageArray){
+        NSLog(@"NICE -> %@",msg);
+    }
 
 }
 

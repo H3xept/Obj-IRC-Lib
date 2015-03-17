@@ -205,10 +205,10 @@
 	[self clientHasReceivedBytes:[[IRCProtocol sharedInstance] parse:self->dataStream]]; 
 }
 
--(void)clientHasReceivedBytes:(IRCMessage*)message
+-(void)clientHasReceivedBytes:(NSMutableArray*)messageArray
 {
 	if(self.delegate){
-		[self.delegate clientHasReceivedBytes:message];
+		[self.delegate clientHasReceivedBytes:messageArray];
 	}else{fprintf(stderr, "%s\n","[!] NO DELEGATE SETTED!");}
 }
 
