@@ -22,28 +22,36 @@
 
 -(NSMutableArray*)parse:(NSString*)dataStream{
 	NSMutableArray* data = [[NSMutableArray alloc] init];
-	for(NSString* msg in [dataStream componentsSeparatedByString:@"\r\n"]){
+	for(NSString* msgLine in [dataStream componentsSeparatedByString:@"\r\n"]){
 
-		if([[msg componentsSeparatedByString:@" "][0] hasPrefix:@":"] && ![msg isEqual:@""]){
+		if([[msgLine componentsSeparatedByString:@" "][0] hasPrefix:@":"] && ![msgLine isEqual:@""]){
 
 			IRCMessage* msg = [[IRCMessage alloc] init];
 
 			@try{
-				msg.prefix = [dataStream componentsSeparatedByString:@" "][0];
+				msg.prefix = [msgLine componentsSeparatedByString:@" "][0];
+				if([msg.prefix hasPrefix:@":"]){
+					NSMutableArray* tempPrefix =(NSMutableArray*)[msg.prefix componentsSeparatedByString:@":"];
+					[tempPrefix removeObjectAtIndex:0];
+					msg.prefix = tempPrefix[0];
+					//NSLog(@"RCULO -> %@",msg.prefix);
+				}
 			}@catch(NSException* e){}
 			@try{
-				msg.command = [dataStream componentsSeparatedByString:@" "][1];
+				msg.command = [msgLine componentsSeparatedByString:@" "][1];
+				//NSLog(@"RCULO -> %@",msg.command);
 			}@catch(NSException* e){}
 			@try{
-			msg.params = [dataStream componentsSeparatedByString:@" "][2];
+				msg.params = [msgLine componentsSeparatedByString:@" "][2];
+				//NSLog(@"RCULO -> %@",msg.params);
 			}@catch(NSException* e){}
 			@try{
-			msg.trailing = [dataStream componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",msg.params]][1];
+				msg.trailing = [msgLine componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",msg.params]][1];
+				//NSLog(@"RCULO -> %@",msg.trailing);
 			}@catch(NSException* e){}
 
+			[data addObject:msg];
 		}
-
-	[data addObject:msg];
 
 	}
 
