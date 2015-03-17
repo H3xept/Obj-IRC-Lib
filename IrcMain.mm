@@ -8,8 +8,10 @@
 
 -(void)clientHasReceivedBytes:(NSMutableArray*)messageArray{
 
-    for(IRCMessage* msg in messageArray){
-        NSLog(@"NICE -> %@",msg.command);
+for(IRCMessage* msg in messageArray){
+        if ([msg.command isEqual:@"353"]) {
+            NSLog(@"TRAILINGO -> %@", msg.trailing);
+        }
     }
     
 

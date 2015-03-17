@@ -7,4 +7,5 @@
 @property (assign , nonatomic) NSString *command;
 @property (assign , nonatomic) NSString *params;
 @property (assign , nonatomic) NSString *trailing;
+@property (assign , nonatomic) NSString *rawString;
 @end

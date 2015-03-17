@@ -34,22 +34,20 @@
 					NSMutableArray* tempPrefix =(NSMutableArray*)[msg.prefix componentsSeparatedByString:@":"];
 					[tempPrefix removeObjectAtIndex:0];
 					msg.prefix = tempPrefix[0];
-					//NSLog(@"RCULO -> %@",msg.prefix);
 				}
 			}@catch(NSException* e){}
 			@try{
 				msg.command = [msgLine componentsSeparatedByString:@" "][1];
-				//NSLog(@"RCULO -> %@",msg.command);
 			}@catch(NSException* e){}
 			@try{
 				msg.params = [msgLine componentsSeparatedByString:@" "][2];
-				//NSLog(@"RCULO -> %@",msg.params);
 			}@catch(NSException* e){}
 			@try{
 				msg.trailing = [msgLine componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",msg.params]][1];
-				//NSLog(@"RCULO -> %@",msg.trailing);
 			}@catch(NSException* e){}
 
+			msg.rawString = msgLine;
+			
 			[data addObject:msg];
 		}
 
