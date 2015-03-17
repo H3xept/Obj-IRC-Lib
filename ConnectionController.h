@@ -17,7 +17,7 @@
 	NSMutableArray* parsedBuffer;
 	BOOL authenticated;
 	BOOL didSendPong;
-	BOOL inChannel;
+	BOOL finishedRegistering;
 }
 
 @property (assign) id delegate;

@@ -19,6 +19,7 @@
 	self.mode = 0;
 	self->didSendPong = NO;
 	self->authenticated = NO;
+	self->finishedRegistering = NO;
 	return self;
 }
 
@@ -136,6 +137,7 @@
 	self->authenticated = nil;
 	self->didSendPong = nil;
 	self.state = kStateDisconnected;
+	self->finishedRegistering = NO;
 }
 
 -(const char*)simpleCStringConvert:(NSString*)string
@@ -175,15 +177,20 @@
 
 -(int)join:(NSString*)channel
 {
+	if(self->finishedRegistering){
+
+// ---------------------------------------
 #ifdef __DEBUG
 	fprintf(stdout, "[+] Joining channel...\n");
 #endif
+// ---------------------------------------
 
-	NSString *join_packet = [[IRCProtocol sharedInstance] craftJoinPacket:channel];
-	if([self send:join_packet] == -1) {
-		fprintf(stderr, "[!] Error: Are you connected?\n");
-		return -1;
-	}
+		NSString *join_packet = [[IRCProtocol sharedInstance] craftJoinPacket:channel];
+		if([self send:join_packet] == -1) {
+			fprintf(stderr, "[!] Error: Are you connected?\n");
+			return -1;
+		}
+	}else{sleep(3);[self join:channel];}
 
 	return 0;
 }
@@ -210,6 +217,14 @@
 	if(self.delegate){
 		[self.delegate clientHasReceivedBytes:messageArray];
 	}else{fprintf(stderr, "%s\n","[!] NO DELEGATE SETTED!");}
+
+	if(self->finishedRegistering == NO){
+		for(IRCMessage* msg in messageArray){
+        	if ([msg.command isEqual:@"255"]) {
+            	self->finishedRegistering = YES;
+        	}
+    	}
+	}
 }
 
 -(void)endConnection

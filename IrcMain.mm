@@ -35,7 +35,7 @@ int main(int argc, const char * argv[])
         [client setPrintIncomingStream:YES];
         [client setDelegate:c];
         [NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:client withObject:nil];
-        sleep(10);
+        //sleep(10);
         [client join:@"#example"];
         [client send:[NSString stringWithFormat:@":%@ PRIVMSG #example Test",client.nick]];
         while(1){
