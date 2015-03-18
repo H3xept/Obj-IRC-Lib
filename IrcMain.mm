@@ -41,6 +41,7 @@ int main(int argc, const char * argv[])
         [NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:client withObject:nil]; //Connection handler has to be called in a separate thread (in the next updates you'll no longer be responsible of the thread)
         [client join:@"#example"];
         [client send:[NSString stringWithFormat:@":%@ PRIVMSG #example Test",client.nick]];
+        [client leaveChannel:@"#example"];
         while(1){
             sleep(5);
         }
@@ -53,3 +54,5 @@ int main(int argc, const char * argv[])
 /*THIS IS AN UNSTABLE VERSION, USE IT CAREFULLY
 
 //WRITTEN BY @H3xept & @Jndok
+
+*/

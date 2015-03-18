@@ -44,5 +44,6 @@
 -(int)ping;
 -(int)join:(NSString*)channel;
 -(void)endConnection;
+-(void)leaveChannel:(NSString*)channel;
 
 @end

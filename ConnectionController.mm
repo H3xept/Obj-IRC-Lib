@@ -190,6 +190,7 @@
 			fprintf(stderr, "[!] Error: Are you connected?\n");
 			return -1;
 		}
+		[self send:@":Test PRIVMSG #example :culo"];
 	}else{sleep(3);[self join:channel];}
 
 	return 0;
@@ -247,5 +248,13 @@
 		}
 	}
 	
+}
+
+-(void)leaveChannel:(NSString*)channel{
+	if(channel){
+		if(self->finishedRegistering==YES){
+			[self send:[NSString stringWithFormat:@"PART %@",channel]];
+		}else{sleep(1);[self leaveChannel:channel];}
+	}
 }
 @end
