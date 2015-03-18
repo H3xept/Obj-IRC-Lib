@@ -32,6 +32,7 @@ int main(int argc, const char * argv[])
 
         [client join:@"#example"];
         [client msg:@"Test message" toChannel:@"#example"];
+        [client send:[NSString stringWithFormat:@":%@ PRIVMSG %@ :Test Message",client.nick,@"#example"]]; //Same command as the previous line, just using general send: method
         [client leaveChannel:@"#example"];
 
         while(1){
