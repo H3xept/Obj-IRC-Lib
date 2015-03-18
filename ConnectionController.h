@@ -32,7 +32,6 @@
 @property BOOL printIncomingStream;
 
 //Lib calls
--(BOOL)getAuthenticated;
 -(void)establishConnection;
 -(void)handleEventNone;
 -(void)handleConnected;
