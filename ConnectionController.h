@@ -51,5 +51,6 @@
 
 
 -(void)endConnection;
+-(void)leaveChannel:(NSString*)channel;
 
 @end
