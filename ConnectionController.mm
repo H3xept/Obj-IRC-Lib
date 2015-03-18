@@ -185,6 +185,7 @@
 			fprintf(stderr, "[!] Error: Are you connected?\n");
 			return -1;
 		}
+
 	} else{
 		sleep(3);
 		[self join:channel];
@@ -234,7 +235,7 @@
 {
 
 	if (!(self->isAFK)) {
-		return 0;
+		return -1;
 	}
 
 	if(self->finishedRegistering){
@@ -304,5 +305,13 @@
 		}
 	}
 	
+}
+
+-(void)leaveChannel:(NSString*)channel{
+	if(channel){
+		if(self->finishedRegistering==YES){
+			[self send:[NSString stringWithFormat:@"PART %@",channel]];
+		}else{sleep(1);[self leaveChannel:channel];}
+	}
 }
 @end
