@@ -50,6 +50,7 @@
 -(void)endConnection;
 -(void)leaveChannel:(NSString*)channel;
 -(void)clientHasReceivedBytes:(NSMutableArray*)messageArray;
+-(void)msg:(NSString*)msg toChannel:(NSString*)channel;
 -(void)connect;
 
 @end

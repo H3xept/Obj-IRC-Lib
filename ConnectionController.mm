@@ -337,6 +337,12 @@
 	}
 }
 
+-(void)msg:(NSString*)msg toChannel:(NSString*)channel{
+	if(msg && channel && self->finishedRegistering == YES){
+		[self send:[NSString stringWithFormat:@":%@ PRIVMSG %@ :%@",self.nick,channel,msg]];
+	}
+}
+
 -(void)connect{
     [NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:self withObject:nil];
 }

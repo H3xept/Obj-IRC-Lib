@@ -31,6 +31,7 @@ int main(int argc, const char * argv[])
         [client connect];
 
         [client join:@"#example"];
+        [client msg:@"Test message" toChannel:@"#example"];
         [client leaveChannel:@"#example"];
 
         while(1){
