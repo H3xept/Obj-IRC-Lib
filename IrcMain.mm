@@ -19,7 +19,7 @@ int main(int argc, const char * argv[])
 
         ConnectionController* client = [[ConnectionController alloc] init];
 
-        [client setHost:@"irc.saurik.com"]; //first server of google list 
+        [client setHost:@"light.wa.us.SwiftIRC.net"]; //first server of google list 
         [client setPort:6667];
         [client setNick:@"Test"];
         [client setName:@"Test"];
