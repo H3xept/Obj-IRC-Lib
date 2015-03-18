@@ -13,7 +13,7 @@
 @interface ConnectionController : NSObject <NSStreamDelegate> {
 	NSInputStream *ingoingConnection;
 	NSOutputStream *outgoingConnection;
-	NSString* dataStream;
+	NSString *dataStream;
 	NSMutableArray* parsedBuffer;
 	BOOL authenticated;
 	BOOL didSendPong;
