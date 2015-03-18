@@ -36,12 +36,15 @@
 					msg.prefix = tempPrefix[0];
 				}
 			}@catch(NSException* e){}
+
 			@try{
 				msg.command = [msgLine componentsSeparatedByString:@" "][1];
 			}@catch(NSException* e){}
+
 			@try{
 				msg.params = [msgLine componentsSeparatedByString:@" "][2];
 			}@catch(NSException* e){}
+			
 			@try{
 				msg.trailing = [msgLine componentsSeparatedByString:[NSString stringWithFormat:@"%@ :",msg.params]][1];
 			}@catch(NSException* e){}

@@ -314,4 +314,8 @@
 		}else{sleep(1);[self leaveChannel:channel];}
 	}
 }
+
+-(void)connect{
+    [NSThread detachNewThreadSelector:@selector(establishConnection) toTarget:self withObject:nil];
+}
 @end

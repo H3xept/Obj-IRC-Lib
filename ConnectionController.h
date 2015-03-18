@@ -23,34 +23,34 @@
 
 @property (assign) id delegate;
 @property connectionState state;
-@property (assign) NSString* HOST;
-@property (assign) int PORT;
+@property (assign) int port;
+@property int mode;
+@property (assign) NSString* host;
 @property (assign) NSString* nick;
 @property (assign) NSString* name;
 @property (assign) NSString* pass;
-@property int mode;
 @property BOOL printIncomingStream;
 
+//Lib calls
 -(BOOL)getAuthenticated;
-
 -(void)establishConnection;
 -(void)handleEventNone;
 -(void)handleConnected;
 -(void)handleBytesAvailable;
 -(void)handleConnectionError;
 -(void)handleDisconnected;
--(int)send:(NSString*)cmd;
--(void)clientHasReceivedBytes:(NSMutableArray*)messageArray;
-
 -(int)handshake;
 -(int)ping;
+// ----
+
+-(int)send:(NSString*)cmd;
 -(int)join:(NSString*)channel;
 -(int)quit:(NSString*)reason;
 -(int)AFK:(NSString*)reason;
 -(int)exitAFK;
-
-
 -(void)endConnection;
 -(void)leaveChannel:(NSString*)channel;
+-(void)clientHasReceivedBytes:(NSMutableArray*)messageArray;
+-(void)connect;
 
 @end
