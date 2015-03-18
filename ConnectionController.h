@@ -18,6 +18,7 @@
 	BOOL authenticated;
 	BOOL didSendPong;
 	BOOL finishedRegistering;
+	BOOL isAFK;
 }
 
 @property (assign) id delegate;
@@ -40,9 +41,15 @@
 -(void)handleDisconnected;
 -(int)send:(NSString*)cmd;
 -(void)clientHasReceivedBytes:(NSMutableArray*)messageArray;
+
 -(int)handshake;
 -(int)ping;
 -(int)join:(NSString*)channel;
+-(int)quit:(NSString*)reason;
+-(int)AFK:(NSString*)reason;
+-(int)exitAFK;
+
+
 -(void)endConnection;
 
 @end

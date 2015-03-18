@@ -71,11 +71,9 @@
 				int result = [self handshake];
 				if(result == 0) {
 
-// ---------------------------------------
 #ifdef __DEBUG
 	fprintf(stdout, "[+] Handshake successful!\n");
 #endif	
-// ---------------------------------------
 
 					self->authenticated = YES;
 					[NSTimer scheduledTimerWithTimeInterval:PING_TIME target:self selector:@selector(ping) userInfo:nil repeats:YES];
@@ -161,11 +159,10 @@
 
 -(int)handshake
 {
-// ---------------------------------------
 #ifdef __DEBUG
 	fprintf(stdout, "[+] Sending handshake...\n");
 #endif
-// ---------------------------------------
+
 	NSString *hndshk_packet = [[IRCProtocol sharedInstance] craftHandshakePacket:self.nick Password:self.pass Mode:self.mode RealName:self.name];
 	if([self send:hndshk_packet] == -1) {
 		fprintf(stderr, "[!] Error: Are you connected?\n");
@@ -179,18 +176,78 @@
 {
 	if(self->finishedRegistering){
 
-// ---------------------------------------
 #ifdef __DEBUG
 	fprintf(stdout, "[+] Joining channel...\n");
 #endif
-// ---------------------------------------
 
 		NSString *join_packet = [[IRCProtocol sharedInstance] craftJoinPacket:channel];
 		if([self send:join_packet] == -1) {
 			fprintf(stderr, "[!] Error: Are you connected?\n");
 			return -1;
 		}
-	}else{sleep(3);[self join:channel];}
+	} else{
+		sleep(3);
+		[self join:channel];
+	}
+
+	return 0;
+}
+
+-(int)quit:(NSString*)reason
+{
+
+	if(self->finishedRegistering){
+
+#ifdef __DEBUG
+	fprintf(stdout, "[+] Quitting...\n");
+#endif
+
+		if([self send:[NSString stringWithFormat:@"QUIT :%@", reason]] == -1) {
+			fprintf(stderr, "[!] Error: Are you connected?\n");
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+-(int)AFK:(NSString*)reason;
+{
+	if(self->finishedRegistering){
+
+#ifdef __DEBUG
+	fprintf(stdout, "[+] Setting AFK...\n");
+#endif
+
+		if([self send:[NSString stringWithFormat:@"AWAY :%@", reason]] == -1) {
+			fprintf(stderr, "[!] Error: Are you connected?\n");
+			return -1;
+		}
+
+		self->isAFK = YES;
+	}
+
+	return 0;
+}
+
+-(int)exitAFK
+{
+
+	if (!(self->isAFK)) {
+		return 0;
+	}
+
+	if(self->finishedRegistering){
+
+#ifdef __DEBUG
+	fprintf(stdout, "[+] Exiting AFK...\n");
+#endif
+
+		if([self send:@"AWAY"] == -1) {
+			fprintf(stderr, "[!] Error: Are you connected?\n");
+			return -1;
+		}
+	}
 
 	return 0;
 }
