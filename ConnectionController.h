@@ -13,7 +13,7 @@
 @interface ConnectionController : NSObject <NSStreamDelegate> {
 	NSInputStream *ingoingConnection;
 	NSOutputStream *outgoingConnection;
-	NSString* dataStream;
+	NSString *dataStream;
 	NSMutableArray* parsedBuffer;
 	BOOL authenticated;
 	BOOL didSendPong;
@@ -23,15 +23,13 @@
 
 @property (assign) id delegate;
 @property connectionState state;
-@property (assign) NSString* HOST;
-@property (assign) int PORT;
-@property (assign) NSString* nick;
-@property (assign) NSString* name;
-@property (assign) NSString* pass;
+@property (assign) NSString *host;
+@property (assign) int port;
+@property (assign) NSString *nick;
+@property (assign) NSString *name;
+@property (assign) NSString *pass;
 @property int mode;
 @property BOOL printIncomingStream;
-
--(BOOL)getAuthenticated;
 
 -(void)establishConnection;
 -(void)handleEventNone;
@@ -48,7 +46,6 @@
 -(int)quit:(NSString*)reason;
 -(int)AFK:(NSString*)reason;
 -(int)exitAFK;
-
 
 -(void)endConnection;
 -(void)leaveChannel:(NSString*)channel;

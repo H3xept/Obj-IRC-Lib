@@ -7,32 +7,43 @@
 
 @implementation ConnectionController
 
+#ifdef __DEBUG
+	const char *connected_host;
+	int connected_port;
+#endif
+
+/* Tool Functions/Methods */
+
+-(const char*)simpleCStringConvert:(NSString*)string
+{
+	return [string cStringUsingEncoding:[NSString defaultCStringEncoding]];
+}
+
+/* Connection Handling Section */
+
 -(instancetype)init 
 {
 	self = [super init];
 	self.state = kStateDisconnected;
-	self.HOST = @"localhost";
-	self.PORT = 6667;
-	self.nick = @"User";
-	self.name = @"User";
-	self.pass = @"Pass";
+	self.host = @"localhost";
+	self.port = 6667;
+	self.nick = @"IRCUser";
+	self.name = @"IRCUser";
+	self.pass = @"IRCUserPassword";
 	self.mode = 0;
 	self->didSendPong = NO;
 	self->authenticated = NO;
 	self->finishedRegistering = NO;
-	return self;
-}
+	self->isAFK = NO;
 
--(BOOL)getAuthenticated
-{
-	return self->didSendPong;
+	return self;
 }
 
 -(void)establishConnection
 {
     CFReadStreamRef ingoingConnectionCF;
     CFWriteStreamRef outgoingConnectionCF;
-    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)self.HOST, self.PORT, &ingoingConnectionCF, &outgoingConnectionCF);
+    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)self.host, self.port, &ingoingConnectionCF, &outgoingConnectionCF);
     ingoingConnection = (NSInputStream *)ingoingConnectionCF;
     outgoingConnection = (NSOutputStream *)outgoingConnectionCF;
 
@@ -44,6 +55,11 @@
 
 	[ingoingConnection open];
 	[outgoingConnection open];
+
+#ifdef __DEBUG
+	connected_host = [self.host UTF8String];
+	connected_port = self.port;
+#endif
 
 	[[NSRunLoop currentRunLoop] run];
 }
@@ -97,8 +113,9 @@
 -(void)handleConnected
 {	
 	if(self.state == kStateDisconnected){
-		const char* host = [self.HOST cStringUsingEncoding:[NSString defaultCStringEncoding]];
-		NSLog(@"Connected to %s:%d",host,self.PORT);
+#ifdef __DEBUG
+		fprintf(stdout, "[~] Connected to: %s:%d\n", connected_host, connected_port);
+#endif	
 		self.state = kStateConnected;
 	}
 }
@@ -108,14 +125,16 @@
 	uint8_t buf[2048];
 	int rLen; 
 
-	while([ingoingConnection hasBytesAvailable]){
+	while([ingoingConnection hasBytesAvailable]) {
 		rLen = [ingoingConnection read:buf maxLength:sizeof(buf)];
-		if(rLen > 0){//GOT DATA
+		if(rLen > 0) {
 			self->dataStream = [[NSString alloc] initWithBytes:buf length:rLen encoding:NSASCIIStringEncoding];
 		}
-		if(self->dataStream){
+		if(self->dataStream) {
 			if(self.printIncomingStream == YES)
-				printf("%s",[self simpleCStringConvert:self->dataStream]);
+#ifdef __DEBUG
+				fprintf(stdout, "%s", [self simpleCStringConvert:self->dataStream]);
+#endif	
 			[self parseBuffer:self->dataStream];
 
 		}
@@ -124,24 +143,21 @@
 
 -(void)handleConnectionError
 {
-	const char* host = [self simpleCStringConvert:self.HOST];
-	printf("There was an error while connecting to <%s:%d>",host,self.PORT);
+#ifdef __DEBUG
+	fprintf(stderr, "[!] There was an error while connecting to %s:%d", connected_host, connected_port);
+#endif	
 }
 
 -(void)handleDisconnected
 { 
-	const char* host = [self simpleCStringConvert:self.HOST];
-	printf("Disconnected from <%s:%d>",host,self.PORT);
+#ifdef __DEBUG
+	fprintf(stdout, "[~] Disconnected from %s:%d", connected_host, connected_port);
+#endif	
+
 	self->authenticated = nil;
 	self->didSendPong = nil;
 	self.state = kStateDisconnected;
 	self->finishedRegistering = NO;
-}
-
--(const char*)simpleCStringConvert:(NSString*)string
-{
-	const char* str = [string cStringUsingEncoding:[NSString defaultCStringEncoding]];
-	return str;
 }
 
 -(int)send:(NSString*)cmd
@@ -156,6 +172,8 @@
 
 	return -1;
 }
+
+/* Command Section */
 
 -(int)handshake
 {
@@ -272,13 +290,17 @@
 
 -(void)clientHasReceivedBytes:(NSMutableArray*)messageArray
 {
-	if(self.delegate){
+	if(self.delegate) {
 		[self.delegate clientHasReceivedBytes:messageArray];
-	}else{fprintf(stderr, "%s\n","[!] NO DELEGATE SETTED!");}
+	} else { 
+#ifdef __DEBUG
+		fprintf(stdout, "[!] No delegate has been set!");
+#endif
+	}
 
-	if(self->finishedRegistering == NO){
-		for(IRCMessage* msg in messageArray){
-        	if ([msg.command isEqual:@"255"]) {
+	if(self->finishedRegistering == NO) {
+		for(IRCMessage* msg in messageArray) {
+        	if([msg.command isEqual:@"255"]) {
             	self->finishedRegistering = YES;
         	}
     	}
