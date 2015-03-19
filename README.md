@@ -1,5 +1,5 @@
 # Obj-IRC –– main library
-IRC protocol implementation, in *(almost)* pure Objective-C.
+IRC protocol implementation, in *(almost)* pure Objective-C. Written by [@jndok](https://twitter.com/jndok) and [@H3xept](https://twitter.com/H3xept)
 
 ## A few warning words
 
